@@ -14,6 +14,8 @@ namespace MisskeyDotNet
         public string Host { get; }
         public string? Token { get; }
 
+        public static HttpClient Http { get; } = new HttpClient();
+
         public Misskey(string host)
         {
             Host = host;
@@ -37,7 +39,7 @@ namespace MisskeyDotNet
                 dict["i"] = Token;
 
             var json = JsonSerializer.Serialize(dict);
-            var res = await http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
+            var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
             return await JsonSerializer.DeserializeAsync<T>(await res.Content.ReadAsStreamAsync(), new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -80,7 +82,5 @@ namespace MisskeyDotNet
         {
             return "https://" + Host + "/api/" + endPoint;
         }
-
-        private static readonly HttpClient http = new HttpClient();
     }
 }
