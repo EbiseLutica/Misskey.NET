@@ -24,7 +24,7 @@ catch (MisskeyApiException e)
 catch (HttpRequestException e)
 {
     // When something happens to the server
-    Console.WriteLine("Something happens to the server. Wait a while and try again.");
+    Console.WriteLine(e.Message);
 }
 ```
 ## MiAuth Authorization (for Misskey v12)
@@ -51,7 +51,7 @@ catch (MisskeyApiException e)
 }
 catch (HttpRequestException e)
 {
-    Console.WriteLine("Something happens to the server. Wait a while and try again.");
+    Console.WriteLine(e.Message);
 }
 ```
 

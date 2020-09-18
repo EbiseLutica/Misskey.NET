@@ -21,10 +21,10 @@ catch (MisskeyApiException e)
     // エラーオブジェクトがサーバーから返ってきた場合
     Console.WriteLine("ユーザー情報の取得に失敗しました。");
 }
-catch (HttpRequestException e)
+catch (HttpException e)
 {
     // サーバーにて問題が発生している場合
-    Console.WriteLine("サーバーに問題が発生しています。しばらく待機してから再試行してください。");
+    Console.WriteLine(e.Message);
 }
 ```
 
@@ -54,7 +54,7 @@ catch (MisskeyApiException e)
 catch (HttpRequestException e)
 {
     // サーバーにて問題が発生している場合
-    Console.WriteLine("サーバーに問題が発生しています。しばらく待機してから再試行してください。");
+    Console.WriteLine(e.Message);
 }
 ```
 

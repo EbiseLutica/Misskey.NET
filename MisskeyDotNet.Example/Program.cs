@@ -7,10 +7,10 @@ namespace MisskeyDotNet.Example
     {
         static async Task Main(string[] args)
         {
-            var io = new Misskey("misskey.io");
+            var io = new Misskey("social.xeltica.work");
             var note = await io.ApiAsync<Note>("notes/show", new
             {
-                noteId = "7zzafqsm9a",
+                noteId = "44444444",
             });
             Console.WriteLine(note.Cw);
             Console.WriteLine(note.Text);

@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Net.Http;
 using System.IO;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace MisskeyDotNet
 {
@@ -40,10 +41,23 @@ namespace MisskeyDotNet
 
             var json = JsonSerializer.Serialize(dict);
             var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
-            return await JsonSerializer.DeserializeAsync<T>(await res.Content.ReadAsStreamAsync(), new JsonSerializerOptions
+            if (res.IsSuccessStatusCode)
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            });
+                return await DeserializeAsync<T>(await res.Content.ReadAsStreamAsync());
+            }
+            if (res.StatusCode == HttpStatusCode.BadRequest || res.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var err = await DeserializeAsync<Error>(await res.Content.ReadAsStreamAsync());
+                throw new MisskeyApiException(err);
+            }
+            else if (res.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new MisskeyApiRequireTokenException();
+            }
+            else
+            {
+                throw new HttpException(res.StatusCode);
+            }
         }
 
         public string Serialize()
@@ -76,6 +90,14 @@ namespace MisskeyDotNet
             }
 
             return new Misskey(host, token);
+        }
+
+        private ValueTask<T> DeserializeAsync<T>(Stream s)
+        { 
+            return JsonSerializer.DeserializeAsync<T>(s, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
         }
 
         private string GetApiUrl(string endPoint)
