@@ -36,10 +36,12 @@ namespace MisskeyDotNet
             if (Token != null)
                 dict["i"] = Token;
 
-            using var reqStream = new MemoryStream();
-            await JsonSerializer.SerializeAsync(reqStream, dict);
-            var res = await http.PostAsync(GetApiUrl(endPoint), new StreamContent(reqStream));
-            return await JsonSerializer.DeserializeAsync<T>(await res.Content.ReadAsStreamAsync());
+            var json = JsonSerializer.Serialize(dict);
+            var res = await http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
+            return await JsonSerializer.DeserializeAsync<T>(await res.Content.ReadAsStreamAsync(), new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
         }
 
         public string Serialize()
