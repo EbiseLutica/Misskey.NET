@@ -51,7 +51,7 @@ catch (MisskeyApiException e)
     // エラーオブジェクトがサーバーから返ってきた場合
     Console.WriteLine("認可に失敗しました。");
 }
-catch (HttpRequestException e)
+catch (HttpException e)
 {
     // サーバーにて問題が発生している場合
     Console.WriteLine(e.Message);
