@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MisskeyDotNet.Example
@@ -7,13 +9,39 @@ namespace MisskeyDotNet.Example
     {
         static async Task Main(string[] args)
         {
-            var io = new Misskey("social.xeltica.work");
-            var note = await io.ApiAsync<Note>("notes/show", new
+            Misskey io;
+            if (File.Exists("credential"))
             {
-                noteId = "44444444",
+                io = Misskey.Import(await File.ReadAllTextAsync("credential"));
+            }
+            else
+            {
+                var miAuth = new MiAuth("misskey.io", "Misskey.NET", null, null, Permission.All);
+                if (!miAuth.TryOpenBrowser())
+                {
+                    Console.WriteLine("次のURLをお使いのウェブブラウザーで開き、認証を完了させてください。");
+                    Console.WriteLine(miAuth.Url);
+                }
+                Console.WriteLine("認可が完了したら、ENTER キーを押してください。");
+                Console.ReadLine();
+
+                io = await miAuth.CheckAsync();
+                await File.WriteAllTextAsync("credential", io.Export());
+            }
+
+            var note = await io.ApiAsync<Note>("notes/show", new 
+            {
+                noteId = "7zzafqsm9a",
             });
-            Console.WriteLine(note.Cw);
-            Console.WriteLine(note.Text);
+
+            Console.WriteLine("Note ID: " + note.Id);
+            Console.WriteLine("CW: " + note.Cw ?? "null");
+            Console.WriteLine("Body: " + note.Text ?? "null");
+            Console.WriteLine("Reactions: ");
+            foreach (var kv in note.Reactions)
+            {
+                Console.WriteLine(" {0}: {1}", kv.Key, kv.Value);   
+            }
         }
     }
 
@@ -22,5 +50,7 @@ namespace MisskeyDotNet.Example
         public string Id { get; set; } = "";
         public string? Text { get; set; }
         public string? Cw { get; set; }
+
+        public Dictionary<string, int> Reactions { get; set; } = new Dictionary<string, int>();
     }
 }

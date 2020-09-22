@@ -11,7 +11,8 @@ var io = new Misskey("misskey.io");
 
 try
 {
-    var user = await io.ApiAsync<Dictionary<string, object>>("users/show", new {
+    var user = await io.ApiAsync<Dictionary<string, object>>("users/show", new
+    {
         userId = "7rkr2cvs0v",
     });
     Console.WriteLine(user["username"]); // Admin
@@ -62,13 +63,15 @@ catch (HttpException e)
 
 Coming soon
 
-## 認証情報のシリアライズ
+## 認証情報のエクスポート
+
+アプリを使用するたびにユーザーに認証させるのはあまり良くありません。Misskey クラスは、認証情報のインポート/エクスポートをサポートします。
 
 ```cs
 // 単純なINI形式の文字列にシリアライズされる
 // トークンなど機密情報が含まれるので、暗号化して保存すると良い
-string serialized = misskey.Serialize();
+string serialized = misskey.Export();
 
-// シリアライズした文字列から Misskey クライアントを生成
-string m = Misskey.Deserialize(serialized);
+// シリアライズした文字列から Misskey クラスのインスタンスを生成
+string m = Misskey.Import(serialized);
 ```

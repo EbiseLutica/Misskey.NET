@@ -11,7 +11,8 @@ var io = new Misskey("misskey.io");
 
 try
 {
-    var user = await io.ApiAsync<Dictionary<string, object>>("users/show", new {
+    var user = await io.ApiAsync<Dictionary<string, object>>("users/show", new 
+    {
         userId = "7rkr2cvs0v",
     });
     Console.WriteLine(user["username"]); // Admin
@@ -59,13 +60,15 @@ catch (HttpRequestException e)
 
 Coming soon
 
-## Serialize the auth information
+## Export auth-information
+
+It's not a good idea to require users to authorize every time they use the app. Misskey class supports import/export auth-information.
 
 ```cs
 // will be serialized as simple INI-formatted string
 // You should encrypt it before saving because it contains confidential data.
-string serialized = misskey.Serialize();
+string serialized = misskey.Export();
 
-// Instantiate a Misskey client from serialized string
-string m = Misskey.Deserialize(serialized);
+// Instantiate a Misskey class from serialized string
+string m = Misskey.Import(serialized);
 ```

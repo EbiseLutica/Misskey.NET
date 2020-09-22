@@ -1,0 +1,35 @@
+namespace MisskeyDotNet
+{
+    public enum Permission
+    { 
+        All = 1,
+        ReadAccount,
+        WriteAccount,
+        ReadBlocks,
+        WriteBlocks,
+        ReadDrive,
+        WriteDrive,
+        ReadFavorites,
+        WriteFavorites,
+        ReadFollowing,
+        WriteFollowing,
+        ReadMessaging,
+        WriteMessaging,
+        ReadMutes,
+        WriteMutes,
+        WriteNotes,
+        ReadNotifications,
+        WriteNotifications,
+        ReadReactions,
+        WriteReactions,
+        WriteVotes,
+        ReadPages,
+        WritePages,
+        WritePageLikes,
+        ReadPageLikes,
+        ReadUserGroups,
+        WriteUserGroups,
+        ReadChannels,
+        WriteChannels,
+    }
+}

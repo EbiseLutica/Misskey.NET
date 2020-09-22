@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Net.Http;
-using System.IO;
 using System.Threading.Tasks;
 using System.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace MisskeyDotNet
 {
-    public class Misskey
+    public sealed class Misskey
     {
         public string Host { get; }
         public string? Token { get; }
@@ -22,32 +20,33 @@ namespace MisskeyDotNet
             Host = host;
         }
 
-        private Misskey(string host, string? token)
+        public Misskey(string host, string? token)
         {
             Host = host;
             Token = token;
         }
 
+        public ValueTask<Dictionary<string, object>> ApiAsync(string endPoint, object? parameters = null)
+        {
+            return ApiAsync<Dictionary<string, object>>(endPoint, parameters);
+        }
+
         public async ValueTask<T> ApiAsync<T>(string endPoint, object? parameters = null)
         {
-            var p = parameters ?? new { };
-
-            var dict = new Dictionary<string, object?>();
-            foreach (PropertyDescriptor d in TypeDescriptor.GetProperties(p))
-                dict[d.Name] = d.GetValue(p);
+            var dict = parameters.ConvertToDictionary();
 
             if (Token != null)
                 dict["i"] = Token;
 
-            var json = JsonSerializer.Serialize(dict);
+            var json = JsonConvert.SerializeObject(dict);
             var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
             if (res.IsSuccessStatusCode)
             {
-                return await DeserializeAsync<T>(await res.Content.ReadAsStreamAsync());
+                return Deserialize<T>(await res.Content.ReadAsStringAsync());
             }
             if (res.StatusCode == HttpStatusCode.BadRequest || res.StatusCode == HttpStatusCode.InternalServerError)
             {
-                var err = await DeserializeAsync<Error>(await res.Content.ReadAsStreamAsync());
+                var err = Deserialize<Error>(await res.Content.ReadAsStringAsync());
                 throw new MisskeyApiException(err);
             }
             else if (res.StatusCode == HttpStatusCode.Unauthorized)
@@ -60,7 +59,7 @@ namespace MisskeyDotNet
             }
         }
 
-        public string Serialize()
+        public string Export()
         {
             var s = "Host=" + Host;
             if (Token is string)
@@ -70,7 +69,7 @@ namespace MisskeyDotNet
             return s;
         }
 
-        public static Misskey Deserialize(string serialized)
+        public static Misskey Import(string serialized)
         {
             var o = serialized.Split('\n').Select(s => s.Split('=', 2)).Select(a => (key: a[0], value: a[1]));
             var host = "";
@@ -92,17 +91,22 @@ namespace MisskeyDotNet
             return new Misskey(host, token);
         }
 
-        private ValueTask<T> DeserializeAsync<T>(Stream s)
+        private T Deserialize<T>(string s)
         { 
-            return JsonSerializer.DeserializeAsync<T>(s, new JsonSerializerOptions
+            return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            });
+                ContractResolver = contractResolver,
+            })!;
         }
 
         private string GetApiUrl(string endPoint)
         {
             return "https://" + Host + "/api/" + endPoint;
         }
+
+        private readonly DefaultContractResolver contractResolver = new DefaultContractResolver
+        {
+            NamingStrategy = new CamelCaseNamingStrategy()
+        };
     }
 }
