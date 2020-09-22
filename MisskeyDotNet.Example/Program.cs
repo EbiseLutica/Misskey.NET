@@ -38,9 +38,16 @@ namespace MisskeyDotNet.Example
             Console.WriteLine("CW: " + note.Cw ?? "null");
             Console.WriteLine("Body: " + note.Text ?? "null");
             Console.WriteLine("Reactions: ");
+            int c = 0;
             foreach (var kv in note.Reactions)
             {
-                Console.WriteLine(" {0}: {1}", kv.Key, kv.Value);   
+                Console.Write(" {0}: {1}", kv.Key, kv.Value);
+                c++;
+                if (c == 5)
+                {
+                    c = 0;
+                    Console.WriteLine();
+                }
             }
         }
     }
