@@ -73,5 +73,20 @@ Coming soon
 string serialized = misskey.Export();
 
 // シリアライズした文字列から Misskey クラスのインスタンスを生成
-string m = Misskey.Import(serialized);
+Misskey m = Misskey.Import(serialized);
 ```
+
+## ストリーミング API
+Coming soon
+
+<!-- 
+
+ストリーミング API を使用することで、Misskey インスタンスからリアルタイムに情報を取得できます。本ライブラリでは、ストリーミングを経由した Misskey API 呼び出しはサポートしません。
+
+ストリーミング API を有効化する場合は次のように書きます。
+
+```cs
+// Misskey misskey;
+MisskeyStreaming stream = await misskey.OpenStreamAsync();
+``` -->
+

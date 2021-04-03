@@ -62,6 +62,9 @@ Coming soon
 
 ## Export auth-information
 
+Coming soon
+
+<!--
 It's not a good idea to require users to authorize every time they use the app. Misskey class supports import/export auth-information.
 
 ```cs
@@ -72,3 +75,5 @@ string serialized = misskey.Export();
 // Instantiate a Misskey class from serialized string
 string m = Misskey.Import(serialized);
 ```
+
+-->
