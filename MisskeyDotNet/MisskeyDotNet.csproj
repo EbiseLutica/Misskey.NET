@@ -7,7 +7,7 @@
     <Nullable>Enable</Nullable>
     <Version>1.0.0</Version>
     <Authors>Xeltica</Authors>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>../LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Xeltica/Misskey.NET/tree/master/MisskeyDotNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Xeltica/Misskey.NET</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
