@@ -14,6 +14,6 @@ jobs:
       with:
         dotnet-version: '5.0.103'
     - run: dotnet build --configuration Release
-    - run: dotnet nuget push Misskey.NET/MisskeyDotNet/bin/Release/MisskeyDotNet.*.nupkg -k $NUGET_OLG_API_KEY -s https://api.nuget.org/v3/index.json
+    - run: dotnet nuget push MisskeyDotNet/bin/Release/MisskeyDotNet.*.nupkg -k $NUGET_OLG_API_KEY -s https://api.nuget.org/v3/index.json
       env:
         NUGET_OLG_API_KEY: ${{ secrets.NUGET_OLG_API_KEY }}
