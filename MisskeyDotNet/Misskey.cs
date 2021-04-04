@@ -40,22 +40,24 @@ namespace MisskeyDotNet
 
             var json = JsonConvert.SerializeObject(dict);
             var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
+            var content = await res.Content.ReadAsStringAsync();;
             if (res.IsSuccessStatusCode)
             {
-                return Deserialize<T>(await res.Content.ReadAsStringAsync());
+                return Deserialize<T>(content);
             }
-            if (res.StatusCode == HttpStatusCode.BadRequest || res.StatusCode == HttpStatusCode.InternalServerError)
+            switch (res.StatusCode)
             {
-                var err = Deserialize<Error>(await res.Content.ReadAsStringAsync());
-                throw new MisskeyApiException(err);
-            }
-            else if (res.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                throw new MisskeyApiRequireTokenException();
-            }
-            else
-            {
-                throw new HttpException(res.StatusCode);
+                case HttpStatusCode.InternalServerError:
+                case HttpStatusCode.BadRequest:
+                    throw new MisskeyApiException(
+                        res.StatusCode == HttpStatusCode.InternalServerError
+                        ? Deserialize<Error>(content)
+                        : Deserialize<ErrorWrapper>(content).Error
+                    );
+                case HttpStatusCode.Unauthorized:
+                    throw new MisskeyApiRequireTokenException();
+                default:
+                    throw new HttpException(res.StatusCode);
             }
         }
 

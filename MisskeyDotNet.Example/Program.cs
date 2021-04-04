@@ -7,7 +7,7 @@ namespace MisskeyDotNet.Example
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             Misskey io;
             if (File.Exists("credential"))
@@ -29,7 +29,13 @@ namespace MisskeyDotNet.Example
                 await File.WriteAllTextAsync("credential", io.Export());
             }
 
-            var note = await io.ApiAsync<Note>("notes/show", new 
+            // await FetchReactions(io);
+            await SummonError(io);
+        }
+
+        private static async Task FetchReactions(Misskey mi)
+        {
+            var note = await mi.ApiAsync<Note>("notes/show", new
             {
                 noteId = "7zzafqsm9a",
             });
@@ -50,14 +56,19 @@ namespace MisskeyDotNet.Example
                 }
             }
         }
-    }
-
-    class Note
-    {
-        public string Id { get; set; } = "";
-        public string? Text { get; set; }
-        public string? Cw { get; set; }
-
-        public Dictionary<string, int> Reactions { get; set; } = new Dictionary<string, int>();
+        private static async Task SummonError(Misskey mi)
+        {
+            try
+            {
+                var note = await mi.ApiAsync<Note>("notes/show", new
+                {
+                    noteId = "m",
+                });
+            }
+            catch (MisskeyApiException e)
+            {
+                Console.WriteLine(e.Error.Message);
+            }
+        }
     }
 }
