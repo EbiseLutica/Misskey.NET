@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MisskeyDotNet
 {
@@ -20,10 +21,10 @@ namespace MisskeyDotNet
         public Dictionary<string, int> Reactions { get; set; } = new Dictionary<string, int>();
         // public string Tags { get; set; }
         // public string Emojis { get; set; }
-        // public string FileIds { get; set; }
-        // public string Files { get; set; }
-        // public string ReplyId { get; set; }
-        // public string RenoteId { get; set; }
+        public string[]? FileIds { get; set; }
+        public DriveFIle[]? Files { get; set; }
+        public string? ReplyId { get; set; }
+        public string? RenoteId { get; set; }
         // channelId { get; set; }
         // channel { get; set; }
         //     id { get; set; }
