@@ -30,7 +30,8 @@ namespace MisskeyDotNet.Example
             }
 
             // await FetchReactions(io);
-            await SummonError(io);
+            // await SummonError(io);
+            await GetMeta(io);
         }
 
         private static async Task FetchReactions(Misskey mi)
@@ -64,6 +65,29 @@ namespace MisskeyDotNet.Example
                 {
                     noteId = "m",
                 });
+            }
+            catch (MisskeyApiException e)
+            {
+                Console.WriteLine(e.Error.Message);
+            }
+        }
+        private static async Task GetMeta(Misskey mi)
+        {
+            try
+            {
+                var meta = await mi.ApiAsync<Meta>("meta");
+                Console.WriteLine($"インスタンス名: {meta.Name}");
+                Console.WriteLine($"バージョン: {meta.Version}");
+                Console.WriteLine($"説明: {meta.Description}");
+                Console.WriteLine($"管理者: {meta.MaintainerName}");
+                Console.WriteLine($"管理者メール: {meta.MaintainerEmail}");
+                Console.WriteLine($"LTL: {(meta.DisableLocalTimeline ? "いいえ" : "はい")}");
+                Console.WriteLine($"GTL: {(meta.DisableGlobalTimeline ? "いいえ" : "はい")}");
+                Console.WriteLine($"登録可能: {(meta.DisableRegistration ? "いいえ" : "はい")}");
+                Console.WriteLine($"メール: {(meta.EnableEmail ? "はい" : "いいえ")}");
+                Console.WriteLine($"Twitter認証: {(meta.EnableTwitterIntegration ? "はい" : "いいえ")}");
+                Console.WriteLine($"Discord認証: {(meta.EnableDiscordIntegration ? "はい" : "いいえ")}");
+                Console.WriteLine($"GitHub認証: {(meta.EnableGithubIntegration ? "はい" : "いいえ")}");
             }
             catch (MisskeyApiException e)
             {
