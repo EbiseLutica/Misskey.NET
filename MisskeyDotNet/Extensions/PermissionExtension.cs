@@ -14,7 +14,7 @@ namespace MisskeyDotNet
             return arr.Select(p => permissionMap[p]).ToArray();
         }
 
-        private static ReadOnlyDictionary<Permission, string> permissionMap = new ReadOnlyDictionary<Permission, string>(
+        private static readonly ReadOnlyDictionary<Permission, string> permissionMap = new ReadOnlyDictionary<Permission, string>(
             new[] {
                 (Permission.ReadAccount, "read:account"),
                 (Permission.WriteAccount, "write:account"),
