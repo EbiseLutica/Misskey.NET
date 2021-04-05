@@ -85,7 +85,7 @@ namespace MisskeyDotNet
 
         public string? ProxyAccountName { get; set; }
 
-        public Dictionary<string, bool>? Features { get; set; }
+        public Dictionary<string, object>? Features { get; set; }
 
         public bool? UseStarForReactionFallback { get; set; }
 
