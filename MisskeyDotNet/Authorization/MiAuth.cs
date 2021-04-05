@@ -6,11 +6,17 @@ namespace MisskeyDotNet
     public sealed class MiAuth
     {
         public string Host { get; }
+
         public string? Name { get; }
+
         public string? IconUrl { get; }
+
         public string? CallbackUrl { get; }
+
         public string Uuid { get; }
+
         public Permission[] Permissions { get; } = new Permission[0];
+
         public string Url { get; }
 
         public MiAuth(string host, string? name, string? iconUrl = null, string? callbackUrl = null, params Permission[] permissions)

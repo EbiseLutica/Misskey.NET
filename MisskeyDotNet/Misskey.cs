@@ -10,27 +10,56 @@ namespace MisskeyDotNet
 {
     public sealed class Misskey
     {
-        public string Host { get; }
-        public string? Token { get; }
-
         public static HttpClient Http { get; } = new HttpClient();
 
+        /// <summary>
+        /// Get a host name of the connecting Misskey instance.
+        /// </summary>
+        public string Host { get; }
+
+        /// <summary>
+        /// Get a current API token.
+        /// </summary>
+        public string? Token { get; }
+
+        /// <summary>
+        /// Initialize a new instance of <see cref="Misskey"/> class.
+        /// </summary>
+        /// <param name="host"></param>
         public Misskey(string host)
         {
             Host = host;
         }
 
+        /// <summary>
+        /// Initialize a new instance of <see cref="Misskey"/> class.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="token"></param>
         public Misskey(string host, string? token)
         {
             Host = host;
             Token = token;
         }
 
+        /// <summary>
+        /// Call HTTP API.
+        /// </summary>
+        /// <param name="endPoint"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public ValueTask<Dictionary<string, object>> ApiAsync(string endPoint, object? parameters = null)
         {
             return ApiAsync<Dictionary<string, object>>(endPoint, parameters);
         }
 
+        /// <summary>
+        /// Call HTTP API.
+        /// </summary>
+        /// <param name="endPoint"></param>
+        /// <param name="parameters"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public async ValueTask<T> ApiAsync<T>(string endPoint, object? parameters = null)
         {
             var dict = parameters.ConvertToDictionary();
@@ -61,6 +90,10 @@ namespace MisskeyDotNet
             }
         }
 
+        /// <summary>
+        /// Serialize this session.
+        /// </summary>
+        /// <returns></returns>
         public string Export()
         {
             var s = "Host=" + Host;
@@ -71,6 +104,11 @@ namespace MisskeyDotNet
             return s;
         }
 
+        /// <summary>
+        /// Restore a serizlied session.
+        /// </summary>
+        /// <param name="serialized"></param>
+        /// <returns></returns>
         public static Misskey Import(string serialized)
         {
             var o = serialized.Split('\n').Select(s => s.Split('=', 2)).Select(a => (key: a[0], value: a[1]));
