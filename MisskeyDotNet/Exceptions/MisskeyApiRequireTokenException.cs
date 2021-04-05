@@ -18,7 +18,7 @@ namespace MisskeyDotNet
         {
         }
 
-        protected MisskeyApiRequireTokenException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected MisskeyApiRequireTokenException(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context)
         {
         }
     }

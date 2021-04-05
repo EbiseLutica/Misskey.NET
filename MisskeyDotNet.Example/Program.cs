@@ -33,7 +33,8 @@ namespace MisskeyDotNet.Example
             // await FetchReactions(io);
             // await SummonError(io);
             // await GetMeta(io);
-            await FetchInstances();
+            // await FetchInstances();
+            await TestWebSocket(io);
         }
 
         private static async ValueTask FetchReactions(Misskey mi)
@@ -104,6 +105,23 @@ namespace MisskeyDotNet.Example
             Console.WriteLine($"インスタンス数: {res.Stats.InstancesCount}");
             Console.WriteLine($"インスタンス一覧:");
             res.InstancesInfos.Select(meta => " " + meta.Url).ToList().ForEach(Console.WriteLine);
+        }
+        private static async ValueTask TestWebSocket(Misskey mi)
+        {
+            using var st = await mi.OpenStreamingAsync();
+
+            st.Received += (res) =>
+            {
+                Console.WriteLine(res.Body);
+            };
+
+            st.Send("connect", new
+            {
+                channel = "homeTimeline",
+                id = "1",
+            });
+            
+            await Task.Delay(60000);
         }
     }
 }

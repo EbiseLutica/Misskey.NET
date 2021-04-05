@@ -27,5 +27,12 @@ namespace MisskeyDotNet
                 throw new NotSupportedException("このプラットフォームはサポートされていません。");
             }
         }
+
+        public static void Debug(string str)
+        {
+            #if DEBUG
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {str}");
+            #endif
+        }
     }
 }

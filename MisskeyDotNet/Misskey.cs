@@ -64,6 +64,8 @@ namespace MisskeyDotNet
         {
             var dict = parameters.ConvertToDictionary();
 
+            Helper.Debug("Call API: " + endPoint);
+
             if (Token != null)
                 dict["i"] = Token;
 
@@ -72,22 +74,20 @@ namespace MisskeyDotNet
             var content = await res.Content.ReadAsStringAsync();
             if (res.IsSuccessStatusCode)
             {
+                Helper.Debug("Success: " + endPoint);
                 return Deserialize<T>(content);
             }
-            switch (res.StatusCode)
+            Helper.Debug("Failed: " + endPoint + " with status " + (int)res.StatusCode);
+            throw res.StatusCode switch
             {
-                case HttpStatusCode.InternalServerError:
-                case HttpStatusCode.BadRequest:
-                    throw new MisskeyApiException(
-                        res.StatusCode == HttpStatusCode.InternalServerError
-                        ? Deserialize<Error>(content)
-                        : Deserialize<ErrorWrapper>(content).Error
-                    );
-                case HttpStatusCode.Unauthorized:
-                    throw new MisskeyApiRequireTokenException();
-                default:
-                    throw new HttpException(res.StatusCode);
-            }
+                HttpStatusCode.InternalServerError or HttpStatusCode.BadRequest => new MisskeyApiException(
+                                       res.StatusCode == HttpStatusCode.InternalServerError
+                                       ? Deserialize<Error>(content)
+                                       : Deserialize<ErrorWrapper>(content).Error
+                                   ),
+                HttpStatusCode.Unauthorized => new MisskeyApiRequireTokenException(),
+                _ => new HttpException(res.StatusCode),
+            };
         }
 
         /// <summary>
@@ -160,12 +160,12 @@ namespace MisskeyDotNet
             throw new HttpException(res.StatusCode);
         }
 
-        private string GetApiUrl(string endPoint)
+        public async ValueTask<StreamingContext> OpenStreamingAsync()
         {
-            return "https://" + Host + "/api/" + endPoint;
+            return await StreamingContext.InitializeAsync(this);
         }
 
-        private static T Deserialize<T>(string s)
+        public static T Deserialize<T>(string s)
         {
             return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
             {
@@ -173,7 +173,12 @@ namespace MisskeyDotNet
             })!;
         }
 
-        private static readonly DefaultContractResolver contractResolver = new DefaultContractResolver
+        private string GetApiUrl(string endPoint)
+        {
+            return "https://" + Host + "/api/" + endPoint;
+        }
+
+        private static readonly DefaultContractResolver contractResolver = new()
         {
             NamingStrategy = new CamelCaseNamingStrategy()
         };
