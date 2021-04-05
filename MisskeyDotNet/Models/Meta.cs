@@ -33,7 +33,7 @@ namespace MisskeyDotNet
 		public string? BackgroundImageUrl { get; set; }
 		public string? LogoImageUrl { get; set; }
 		public int MaxNoteTextLength { get; set; }
-		// public Emoji[] Emojis { get; set; }
+		public Emoji[] Emojis { get; set; } = Array.Empty<Emoji>();
 		public bool EnableEmail { get; set; }
 		public bool EnableTwitterIntegration { get; set; }
 		public bool EnableGithubIntegration { get; set; }

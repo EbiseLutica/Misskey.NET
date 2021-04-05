@@ -19,8 +19,8 @@ namespace MisskeyDotNet
         public int RenoteCount { get; set; }
         public int RepliesCount { get; set; }
         public Dictionary<string, int> Reactions { get; set; } = new Dictionary<string, int>();
-        // public string Tags { get; set; }
-        // public string Emojis { get; set; }
+        public string[]? Tags { get; set; }
+        public Emoji[] Emojis { get; set; } = Array.Empty<Emoji>();
         public string[]? FileIds { get; set; }
         public DriveFIle[]? Files { get; set; }
         public string? ReplyId { get; set; }
@@ -30,10 +30,12 @@ namespace MisskeyDotNet
         //     id { get; set; }
         //     name { get; set; }
         // }  { get; set; }
-        // mentions { get; set; }
+        public string[]? Mentions { get; set; }
         public string? Uri { get; set; }
         public string? Url { get; set; }
         public string? _featuredId_ { get; set; }
         public string? _prId_ { get; set; }
+        public Note? Reply { get; set; }
+        public Note? Renote { get; set; }
     }
 }
