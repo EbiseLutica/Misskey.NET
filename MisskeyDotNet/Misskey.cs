@@ -131,6 +131,24 @@ namespace MisskeyDotNet
             return new Misskey(host, token);
         }
 
+        public async ValueTask<Meta> MetaAsync(bool forceFetch = false)
+        {
+            if (forceFetch || cachedMeta is null)
+            {
+                cachedMeta = await ApiAsync<Meta>("meta");
+            }
+            return cachedMeta;
+        }
+
+        public async ValueTask<User> IAsync(bool forceFetch = false)
+        {
+            if (forceFetch || cachedI is null)
+            {
+                cachedI = await ApiAsync<User>("i");
+            }
+            return cachedI;
+        }
+
         private T Deserialize<T>(string s)
         { 
             return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
@@ -148,5 +166,8 @@ namespace MisskeyDotNet
         {
             NamingStrategy = new CamelCaseNamingStrategy()
         };
+
+        private Meta? cachedMeta;
+        private User? cachedI;
     }
 }
