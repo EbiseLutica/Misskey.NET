@@ -10,27 +10,56 @@ namespace MisskeyDotNet
 {
     public sealed class Misskey
     {
-        public string Host { get; }
-        public string? Token { get; }
-
         public static HttpClient Http { get; } = new HttpClient();
 
+        /// <summary>
+        /// Get a host name of the connecting Misskey instance.
+        /// </summary>
+        public string Host { get; }
+
+        /// <summary>
+        /// Get a current API token.
+        /// </summary>
+        public string? Token { get; }
+
+        /// <summary>
+        /// Initialize a new instance of <see cref="Misskey"/> class.
+        /// </summary>
+        /// <param name="host"></param>
         public Misskey(string host)
         {
             Host = host;
         }
 
+        /// <summary>
+        /// Initialize a new instance of <see cref="Misskey"/> class.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="token"></param>
         public Misskey(string host, string? token)
         {
             Host = host;
             Token = token;
         }
 
+        /// <summary>
+        /// Call HTTP API.
+        /// </summary>
+        /// <param name="endPoint"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public ValueTask<Dictionary<string, object>> ApiAsync(string endPoint, object? parameters = null)
         {
             return ApiAsync<Dictionary<string, object>>(endPoint, parameters);
         }
 
+        /// <summary>
+        /// Call HTTP API.
+        /// </summary>
+        /// <param name="endPoint"></param>
+        /// <param name="parameters"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public async ValueTask<T> ApiAsync<T>(string endPoint, object? parameters = null)
         {
             var dict = parameters.ConvertToDictionary();
@@ -40,7 +69,7 @@ namespace MisskeyDotNet
 
             var json = JsonConvert.SerializeObject(dict);
             var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
-            var content = await res.Content.ReadAsStringAsync();;
+            var content = await res.Content.ReadAsStringAsync();
             if (res.IsSuccessStatusCode)
             {
                 return Deserialize<T>(content);
@@ -61,6 +90,10 @@ namespace MisskeyDotNet
             }
         }
 
+        /// <summary>
+        /// Serialize this session.
+        /// </summary>
+        /// <returns></returns>
         public string Export()
         {
             var s = "Host=" + Host;
@@ -71,6 +104,11 @@ namespace MisskeyDotNet
             return s;
         }
 
+        /// <summary>
+        /// Restore a serizlied session.
+        /// </summary>
+        /// <param name="serialized"></param>
+        /// <returns></returns>
         public static Misskey Import(string serialized)
         {
             var o = serialized.Split('\n').Select(s => s.Split('=', 2)).Select(a => (key: a[0], value: a[1]));
@@ -93,12 +131,33 @@ namespace MisskeyDotNet
             return new Misskey(host, token);
         }
 
-        private T Deserialize<T>(string s)
-        { 
-            return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
+        public async ValueTask<Meta> MetaAsync(bool forceFetch = false)
+        {
+            if (forceFetch || cachedMeta is null)
             {
-                ContractResolver = contractResolver,
-            })!;
+                cachedMeta = await ApiAsync<Meta>("meta");
+            }
+            return cachedMeta;
+        }
+
+        public async ValueTask<User> IAsync(bool forceFetch = false)
+        {
+            if (forceFetch || cachedI is null)
+            {
+                cachedI = await ApiAsync<User>("i");
+            }
+            return cachedI;
+        }
+
+        public static async ValueTask<JoinMisskeyApiResponse> JoinMisskeyInstancesApiAsync()
+        {
+            var res = await Http.GetAsync(joinMisskeyJsonUrl);
+            var content = await res.Content.ReadAsStringAsync();
+            if (res.IsSuccessStatusCode)
+            {
+                return Deserialize<JoinMisskeyApiResponse>(content);
+            }
+            throw new HttpException(res.StatusCode);
         }
 
         private string GetApiUrl(string endPoint)
@@ -106,9 +165,22 @@ namespace MisskeyDotNet
             return "https://" + Host + "/api/" + endPoint;
         }
 
-        private readonly DefaultContractResolver contractResolver = new DefaultContractResolver
+        private static T Deserialize<T>(string s)
+        {
+            return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+            })!;
+        }
+
+        private static readonly DefaultContractResolver contractResolver = new DefaultContractResolver
         {
             NamingStrategy = new CamelCaseNamingStrategy()
         };
+
+        private Meta? cachedMeta;
+        private User? cachedI;
+
+        private static readonly string joinMisskeyJsonUrl = "https://instanceapp.misskey.page/instances.json";
     }
 }
