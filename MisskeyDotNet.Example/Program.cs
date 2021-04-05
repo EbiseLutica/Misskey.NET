@@ -42,6 +42,7 @@ namespace MisskeyDotNet.Example
             });
 
             Console.WriteLine("Note ID: " + note.Id);
+            Console.WriteLine("Note Created At: " + note.CreatedAt);
             Console.WriteLine("CW: " + note.Cw ?? "null");
             Console.WriteLine("Body: " + note.Text ?? "null");
             Console.WriteLine("Reactions: ");
