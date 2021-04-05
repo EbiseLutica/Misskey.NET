@@ -69,7 +69,7 @@ namespace MisskeyDotNet
 
             var json = JsonConvert.SerializeObject(dict);
             var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
-            var content = await res.Content.ReadAsStringAsync();;
+            var content = await res.Content.ReadAsStringAsync();
             if (res.IsSuccessStatusCode)
             {
                 return Deserialize<T>(content);
@@ -149,12 +149,15 @@ namespace MisskeyDotNet
             return cachedI;
         }
 
-        private T Deserialize<T>(string s)
-        { 
-            return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
+        public static async ValueTask<JoinMisskeyApiResponse> JoinMisskeyInstancesApiAsync()
+        {
+            var res = await Http.GetAsync(joinMisskeyJsonUrl);
+            var content = await res.Content.ReadAsStringAsync();
+            if (res.IsSuccessStatusCode)
             {
-                ContractResolver = contractResolver,
-            })!;
+                return Deserialize<JoinMisskeyApiResponse>(content);
+            }
+            throw new HttpException(res.StatusCode);
         }
 
         private string GetApiUrl(string endPoint)
@@ -162,12 +165,22 @@ namespace MisskeyDotNet
             return "https://" + Host + "/api/" + endPoint;
         }
 
-        private readonly DefaultContractResolver contractResolver = new DefaultContractResolver
+        private static T Deserialize<T>(string s)
+        {
+            return JsonConvert.DeserializeObject<T>(s, new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+            })!;
+        }
+
+        private static readonly DefaultContractResolver contractResolver = new DefaultContractResolver
         {
             NamingStrategy = new CamelCaseNamingStrategy()
         };
 
         private Meta? cachedMeta;
         private User? cachedI;
+
+        private static readonly string joinMisskeyJsonUrl = "https://instanceapp.misskey.page/instances.json";
     }
 }

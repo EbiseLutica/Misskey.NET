@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MisskeyDotNet.Example
@@ -31,10 +32,11 @@ namespace MisskeyDotNet.Example
 
             // await FetchReactions(io);
             // await SummonError(io);
-            await GetMeta(io);
+            // await GetMeta(io);
+            await FetchInstances();
         }
 
-        private static async Task FetchReactions(Misskey mi)
+        private static async ValueTask FetchReactions(Misskey mi)
         {
             var note = await mi.ApiAsync<Note>("notes/show", new
             {
@@ -58,7 +60,7 @@ namespace MisskeyDotNet.Example
                 }
             }
         }
-        private static async Task SummonError(Misskey mi)
+        private static async ValueTask SummonError(Misskey mi)
         {
             try
             {
@@ -72,7 +74,7 @@ namespace MisskeyDotNet.Example
                 Console.WriteLine(e.Error.Message);
             }
         }
-        private static async Task GetMeta(Misskey mi)
+        private static async ValueTask GetMeta(Misskey mi)
         {
             try
             {
@@ -94,6 +96,14 @@ namespace MisskeyDotNet.Example
             {
                 Console.WriteLine(e.Error.Message);
             }
+        }
+        private static async ValueTask FetchInstances()
+        {
+            var res = await Misskey.JoinMisskeyInstancesApiAsync();
+            Console.WriteLine($"最終更新: {res.Date}");
+            Console.WriteLine($"インスタンス数: {res.Stats.InstancesCount}");
+            Console.WriteLine($"インスタンス一覧:");
+            res.InstancesInfos.Select(meta => " " + meta.Url).ToList().ForEach(Console.WriteLine);
         }
     }
 }
