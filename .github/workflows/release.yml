@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-    - release
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -17,3 +17,39 @@ jobs:
     - run: dotnet nuget push MisskeyDotNet/bin/Release/MisskeyDotNet.*.nupkg -k $NUGET_OLG_API_KEY -s https://api.nuget.org/v3/index.json
       env:
         NUGET_OLG_API_KEY: ${{ secrets.NUGET_OLG_API_KEY }}
+      - name: GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            - いくつかの組み込みモデルクラスを追加
+                - Note
+                - User
+                - DriveFile
+                - DriveFolder
+                - Emoji
+                - Meta
+            - Misskey#MetaAsync メソッドを追加
+            - Misskey#IAsync メソッドを追加
+            - インスタンスリストを取得するJoinMisskey APIを追加
+            - HttpException クラスが非公開になっている問題を修正
+            - MisskeyApiException 例外発生時にエラーメッセージを正しく取得できない問題を修正
+
+            - Add some builtin model classes:
+                - Note
+                - User
+                - DriveFile
+                - DriveFolder
+                - Emoji
+                - Meta
+            - Add Misskey#MetaAsync method
+            - Add Misskey#IAsync method
+            - Add JoinMisskey API to fetch instances list
+            - Fix that the HttpException class is invisible
+            - Fix that the thrown MisskeyApiException has no error information
+          draft: false
+          prerelease: false
