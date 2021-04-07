@@ -50,7 +50,7 @@ namespace MisskeyDotNet
             Helper.Debug($"Closed socket.");
         }
 
-        protected virtual void OnReceived(StreamingResponse res)
+        protected virtual void OnReceived(StreamingMessage res)
         {
             Received?.Invoke(res);
         }
@@ -65,11 +65,7 @@ namespace MisskeyDotNet
             Helper.Debug($"Received message type: " + type);
             if (type is not null && body is not null)
             {
-                OnReceived(new StreamingResponse
-                {
-                    Type = type,
-                    Body = body,
-                });
+                OnReceived(new StreamingMessage(type, body));
             }
         }
 
@@ -85,8 +81,8 @@ namespace MisskeyDotNet
 
         public event StreamingReceivedEventHandler? Received;
 
-        private WebSocket sock;
+        private readonly WebSocket sock;
     }
 
-    public delegate void StreamingReceivedEventHandler(StreamingResponse res);
+    public delegate void StreamingReceivedEventHandler(StreamingMessage res);
 }

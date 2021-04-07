@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <Nullable>Enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>MisskeyDotNet</RootNamespace>
-    <Nullable>Enable</Nullable>
     <Version>1.1.0</Version>
     <Authors>Xeltica</Authors>
     <PackageProjectUrl>https://github.com/Xeltica/Misskey.NET/tree/release/MisskeyDotNet</PackageProjectUrl>
