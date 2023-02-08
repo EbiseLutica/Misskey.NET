@@ -36,9 +36,8 @@ namespace MisskeyDotNet
         /// </summary>
         /// <param name="host"></param>
         /// <param name="token"></param>
-        public Misskey(string host, string? token)
+        public Misskey(string host, string? token) : this(host)
         {
-            Host = host;
             Token = token;
         }
 
@@ -68,7 +67,7 @@ namespace MisskeyDotNet
                 dict["i"] = Token;
 
             var json = JsonConvert.SerializeObject(dict);
-            var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json));
+            var res = await Http.PostAsync(GetApiUrl(endPoint), new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             var content = await res.Content.ReadAsStringAsync();
             if (res.IsSuccessStatusCode)
             {
