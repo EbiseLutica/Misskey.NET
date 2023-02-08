@@ -26,30 +26,6 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: ${{ github.ref }}
         body: |
-          - いくつかの組み込みモデルクラスを追加
-              - Note
-              - User
-              - DriveFile
-              - DriveFolder
-              - Emoji
-              - Meta
-          - Misskey#MetaAsync メソッドを追加
-          - Misskey#IAsync メソッドを追加
-          - インスタンスリストを取得するJoinMisskey APIを追加
-          - HttpException クラスが非公開になっている問題を修正
-          - MisskeyApiException 例外発生時にエラーメッセージを正しく取得できない問題を修正
-
-          - Add some builtin model classes:
-              - Note
-              - User
-              - DriveFile
-              - DriveFolder
-              - Emoji
-              - Meta
-          - Add Misskey#MetaAsync method
-          - Add Misskey#IAsync method
-          - Add JoinMisskey API to fetch instances list
-          - Fix that the HttpException class is invisible
-          - Fix that the thrown MisskeyApiException has no error information
+          - Misskey v13で正常に動作しない問題を修正
         draft: false
         prerelease: false
