@@ -58,13 +58,10 @@ catch (HttpRequestException e)
 
 ## Legacy Authorization (for Misskey v10, v11)
 
-Coming soon
+Not supported. (Conrtibution welcome!)
 
 ## Export auth-information
 
-Coming soon
-
-<!--
 It's not a good idea to require users to authorize every time they use the app. Misskey class supports import/export auth-information.
 
 ```cs
@@ -76,4 +73,6 @@ string serialized = misskey.Export();
 string m = Misskey.Import(serialized);
 ```
 
--->
+## Streaming API
+
+Coming soon

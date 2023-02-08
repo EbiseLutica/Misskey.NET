@@ -61,7 +61,7 @@ catch (HttpException e)
 
 ## レガシー認可 (for Misskey v10, v11)
 
-Coming soon
+サポートしていません。（コントリビューションを歓迎します）
 
 ## 認証情報のエクスポート
 
